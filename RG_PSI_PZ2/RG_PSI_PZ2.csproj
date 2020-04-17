@@ -64,6 +64,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\CoordinateConversion.cs" />
+    <Compile Include="Helpers\GeographicXmlLoader.cs" />
     <Compile Include="Helpers\GridMap.cs" />
     <Compile Include="Helpers\GridMapCell.cs" />
     <Compile Include="MainWindow.xaml.cs">

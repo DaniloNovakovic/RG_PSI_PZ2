@@ -1,4 +1,5 @@
 ﻿using RG_PSI_PZ2.Helpers;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -28,11 +29,11 @@ namespace RG_PSI_PZ2
 
         private void LoadXml()
         {
-            var doc = new XmlDocument();
-            doc.Load("Geographic.xml");
+            var loader = new GeographicXmlLoader();
+            var nodeEntities = loader.GetNodeEntities();
 
-            var nodes = doc.DocumentElement.SelectNodes(("/NetworkModel/Nodes/NodeEntity"));
-            // TODO: Load nodes and map them to GridMap
+            Debug.WriteLine($"NodeEntities Loaded: {nodeEntities.Count}");
+
             // TODO: Draw GridMap elements to DisplayGrid
         }
 
