@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-
-namespace RG_PSI_PZ2.Helpers
+﻿namespace RG_PSI_PZ2.Helpers
 {
     public class GridMap
     {
@@ -15,13 +12,47 @@ namespace RG_PSI_PZ2.Helpers
         public int NumCols => _map.GetLength(1);
         public int NumRows => _map.GetLength(0);
 
-        public void InitGrid(Grid grid)
+        public void Add(int x, int y, GridMapCell cell)
         {
-            for (int i = 0; i < NumRows; i++)
+            Clip(ref x, ref y);
+            _map[x, y] = cell;
+        }
+
+        public void Delete(int x, int y)
+        {
+            Clip(ref x, ref y);
+            _map[x, y] = null;
+        }
+
+        public GridMapCell Get(int x, int y)
+        {
+            Clip(ref x, ref y);
+            return _map[x, y];
+        }
+
+        public bool IsTaken(int x, int y)
+        {
+            Clip(ref x, ref y);
+            return _map[x, y] == null;
+        }
+
+        private void Clip(ref int x, ref int y)
+        {
+            x = Clip(x, min: 0, max: NumRows - 1);
+            y = Clip(y, min: 0, max: NumCols - 1);
+        }
+
+        private int Clip(int value, int min, int max)
+        {
+            if (value < min)
             {
-                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(grid.Width / NumCols) });
-                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(grid.Height / NumRows) });
+                return min;
             }
+            else if (value > max)
+            {
+                return max;
+            }
+            return value;
         }
     }
 }

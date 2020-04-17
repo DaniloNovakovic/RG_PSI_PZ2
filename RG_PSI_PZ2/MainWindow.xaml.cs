@@ -1,20 +1,6 @@
 ﻿using RG_PSI_PZ2.Helpers;
-using RG_PSI_PZ2.Model;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 
 namespace RG_PSI_PZ2
@@ -24,11 +10,20 @@ namespace RG_PSI_PZ2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private GridMap _map = new GridMap(100, 100);
+        private readonly GridMap _map = new GridMap(100, 100);
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void InitGrid()
+        {
+            for (int i = 0; i < _map.NumRows; i++)
+            {
+                DisplayGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(Width / _map.NumCols) });
+                DisplayGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(Height / _map.NumRows) });
+            }
         }
 
         private void LoadXml()
@@ -41,10 +36,9 @@ namespace RG_PSI_PZ2
             // TODO: Draw GridMap elements to DisplayGrid
         }
 
-        private void window_Loaded(object sender, RoutedEventArgs e)
+        private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
-            _map.InitGrid(DisplayGrid);
-
+            InitGrid();
             LoadXml();
         }
     }
