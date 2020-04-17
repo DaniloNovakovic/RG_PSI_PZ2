@@ -48,5 +48,10 @@ namespace RG_PSI_PZ2.Helpers
             longitude = ((delt * (180.0 / Math.PI)) + s) + diflon;
             latitude = ((lat + (1 + e2cuadrada * Math.Pow(Math.Cos(lat), 2) - (3.0 / 2.0) * e2cuadrada * Math.Sin(lat) * Math.Cos(lat) * (tao - lat)) * (tao - lat)) * (180.0 / Math.PI)) + diflat;
         }
+
+        public static double Scale(int value, int min, int max, int minScale, int maxScale)
+        {
+            return minScale + ((double)(value - min) / (max - min) * (maxScale - minScale));
+        }
     }
 }
