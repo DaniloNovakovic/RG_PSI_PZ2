@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RG_PSI_PZ2", "RG_PSI_PZ2\RG_PSI_PZ2.csproj", "{4A5E2F29-249F-4076-9BAC-A3285D7F2DE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RG_PSI_PZ2Tests", "RG_PSI_PZ2Tests\RG_PSI_PZ2Tests.csproj", "{703E25AD-0ABD-42C1-A904-879ACA53C41E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A5E2F29-249F-4076-9BAC-A3285D7F2DE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A5E2F29-249F-4076-9BAC-A3285D7F2DE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A5E2F29-249F-4076-9BAC-A3285D7F2DE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A5E2F29-249F-4076-9BAC-A3285D7F2DE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{703E25AD-0ABD-42C1-A904-879ACA53C41E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{703E25AD-0ABD-42C1-A904-879ACA53C41E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{703E25AD-0ABD-42C1-A904-879ACA53C41E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{703E25AD-0ABD-42C1-A904-879ACA53C41E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F470CDB-9156-49BF-BD05-E27912050C1D}
+	EndGlobalSection
+EndGlobal
