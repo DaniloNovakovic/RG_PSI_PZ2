@@ -1,4 +1,6 @@
-﻿namespace RG_PSI_PZ2.Helpers
+﻿using System;
+
+namespace RG_PSI_PZ2.Helpers
 {
     public class GridMap
     {
@@ -22,6 +24,25 @@
         {
             Clip(ref x, ref y);
             _map[x, y] = null;
+        }
+
+        /// <summary>
+        /// Calls `action(x, y, cell)` for every cell element
+        /// </summary>
+        /// <param name="action"></param>
+        public void ForEach(Action<int, int, GridMapCell> action)
+        {
+            for (int x = 0; x < NumRows; ++x)
+            {
+                for (int y = 0; y < NumCols; ++y)
+                {
+                    var cell = _map[x, y];
+                    if (cell != null)
+                    {
+                        action(x, y, cell);
+                    }
+                }
+            }
         }
 
         public GridMapCell Get(int x, int y)

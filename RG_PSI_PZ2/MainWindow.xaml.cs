@@ -36,15 +36,14 @@ namespace RG_PSI_PZ2
         private void LoadXml()
         {
             var loader = new GeographicXmlLoader();
+
             var nodeEntities = loader.GetNodeEntities();
-            DrawToGrid(nodeEntities);
+            AddToGridMap(nodeEntities, CreateNodeEntityUIElement);
 
-            Debug.WriteLine($"NodeEntities Loaded: {nodeEntities.Count}");
-
-            // TODO: Draw GridMap elements to DisplayGrid
+            DrawGridMapToDisplayGrid();
         }
 
-        private void DrawToGrid(List<NodeEntity> nodeEntities)
+        private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)
         {
             var xCoords = nodeEntities.Select(e => e.X).ToList();
             var yCoords = nodeEntities.Select(e => e.Y).ToList();
@@ -59,15 +58,23 @@ namespace RG_PSI_PZ2
                 int gridX = (int)Math.Round(CoordinateConversion.Scale(item.X, minX, maxX, 0, _map.NumRows));
                 int gridY = (int)Math.Round(CoordinateConversion.Scale(item.Y, minY, maxY, 0, _map.NumCols));
 
-                var uiElement = new Ellipse { Fill = Brushes.Purple };
+                var uiElement = createUIElement(item);
 
                 Grid.SetColumn(uiElement, gridY);
                 Grid.SetRow(uiElement, gridX);
 
-                DisplayGrid.Children.Add(uiElement);
-
-                _map.Add(gridX, gridY, new GridMapCell { Value = item, UIElement = uiElement });
+                _map.Add(gridX, gridY, new GridMapCell(item, uiElement));
             }
+        }
+
+        private FrameworkElement CreateNodeEntityUIElement(PowerEntity entity)
+        {
+            return new Ellipse { Fill = Brushes.Purple, ToolTip = entity };
+        }
+
+        private void DrawGridMapToDisplayGrid()
+        {
+            _map.ForEach((_, __, cell) => DisplayGrid.Children.Add(cell.UIElement));
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
