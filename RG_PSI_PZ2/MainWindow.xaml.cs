@@ -17,7 +17,7 @@ namespace RG_PSI_PZ2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly GridMap _map = new GridMap(100, 100);
+        private readonly GridMap _map = new GridMap(200, 200);
 
         public MainWindow()
         {
