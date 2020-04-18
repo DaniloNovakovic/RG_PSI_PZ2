@@ -1,4 +1,5 @@
 ﻿using RG_PSI_PZ2.Model;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
@@ -28,7 +29,15 @@ namespace RG_PSI_PZ2.Helpers
             return GetEntities<SubstationEntity>(xpath);
         }
 
-        private IEnumerable<T> GetEntities<T>(string xpath) where T : PowerEntity, new()
+        public IEnumerable<SwitchEntity> GetSwitchEntities(string xpath = "/NetworkModel/Switches/SwitchEntity")
+        {
+            return GetEntities<SwitchEntity>(xpath, (xmlNode, entity) =>
+            {
+                entity.Status = xmlNode.SelectSingleNode("Status").InnerText;
+            });
+        }
+
+        private IEnumerable<T> GetEntities<T>(string xpath, Action<XmlNode, T> action = null) where T : PowerEntity, new()
         {
             var entityList = new List<T>();
 
@@ -42,7 +51,11 @@ namespace RG_PSI_PZ2.Helpers
 
                 CoordinateConversion.ToLatLon(utmX, utmY, _zoneUtm, out double x, out double y);
 
-                entityList.Add(new T() { Id = id, Name = name, X = x, Y = y });
+                var entity = new T() { Id = id, Name = name, X = x, Y = y };
+
+                action?.Invoke(item, entity);
+
+                entityList.Add(entity);
             }
 
             return entityList;

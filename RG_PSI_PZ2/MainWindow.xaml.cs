@@ -2,13 +2,11 @@
 using RG_PSI_PZ2.Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml;
-using System.Linq;
-using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace RG_PSI_PZ2
 {
@@ -42,6 +40,9 @@ namespace RG_PSI_PZ2
 
             var substationEntities = loader.GetSubstationEntities();
             AddToGridMap(substationEntities, CreateSubstationEntityUIElement);
+
+            var switchEntities = loader.GetSwitchEntities();
+            AddToGridMap(switchEntities, CreateSwitchEntityUIElement);
 
             DrawGridMapToDisplayGrid();
         }
@@ -78,6 +79,11 @@ namespace RG_PSI_PZ2
         private FrameworkElement CreateSubstationEntityUIElement(PowerEntity entity)
         {
             return new Rectangle { Fill = Brushes.OrangeRed, ToolTip = entity };
+        }
+
+        private FrameworkElement CreateSwitchEntityUIElement(PowerEntity entity)
+        {
+            return new Ellipse { Fill = Brushes.GreenYellow, ToolTip = entity };
         }
 
         private void DrawGridMapToDisplayGrid()
