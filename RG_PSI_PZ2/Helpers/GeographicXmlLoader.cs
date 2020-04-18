@@ -20,7 +20,17 @@ namespace RG_PSI_PZ2.Helpers
 
         public IEnumerable<NodeEntity> GetNodeEntities(string xpath = "/NetworkModel/Nodes/NodeEntity")
         {
-            var entityList = new List<NodeEntity>();
+            return GetEntities<NodeEntity>(xpath);
+        }
+
+        public IEnumerable<SubstationEntity> GetSubstationEntities(string xpath = "/NetworkModel/Substations/SubstationEntity")
+        {
+            return GetEntities<SubstationEntity>(xpath);
+        }
+
+        private IEnumerable<T> GetEntities<T>(string xpath) where T : PowerEntity, new()
+        {
+            var entityList = new List<T>();
 
             foreach (XmlNode item in _doc.DocumentElement.SelectNodes(xpath))
             {
@@ -32,7 +42,7 @@ namespace RG_PSI_PZ2.Helpers
 
                 CoordinateConversion.ToLatLon(utmX, utmY, _zoneUtm, out double x, out double y);
 
-                entityList.Add(new NodeEntity() { Id = id, Name = name, X = x, Y = y });
+                entityList.Add(new T() { Id = id, Name = name, X = x, Y = y });
             }
 
             return entityList;

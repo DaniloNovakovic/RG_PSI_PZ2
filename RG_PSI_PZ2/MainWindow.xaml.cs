@@ -40,6 +40,9 @@ namespace RG_PSI_PZ2
             var nodeEntities = loader.GetNodeEntities();
             AddToGridMap(nodeEntities, CreateNodeEntityUIElement);
 
+            var substationEntities = loader.GetSubstationEntities();
+            AddToGridMap(substationEntities, CreateSubstationEntityUIElement);
+
             DrawGridMapToDisplayGrid();
         }
 
@@ -70,6 +73,11 @@ namespace RG_PSI_PZ2
         private FrameworkElement CreateNodeEntityUIElement(PowerEntity entity)
         {
             return new Ellipse { Fill = Brushes.Purple, ToolTip = entity };
+        }
+
+        private FrameworkElement CreateSubstationEntityUIElement(PowerEntity entity)
+        {
+            return new Rectangle { Fill = Brushes.OrangeRed, ToolTip = entity };
         }
 
         private void DrawGridMapToDisplayGrid()
