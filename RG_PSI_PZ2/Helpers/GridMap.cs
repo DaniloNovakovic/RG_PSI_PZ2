@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RG_PSI_PZ2.Helpers
 {
     public class GridMap
     {
         private readonly GridMapCell[,] _map;
+        private readonly Dictionary<long, GridMapCell> _cellByIdCache;
 
         public GridMap(int numRows, int numCols)
         {
             _map = new GridMapCell[numRows, numCols];
+            _cellByIdCache = new Dictionary<long, GridMapCell>();
         }
 
         public int NumCols => _map.GetLength(1);
@@ -18,12 +21,18 @@ namespace RG_PSI_PZ2.Helpers
         {
             Clip(ref x, ref y);
             _map[x, y] = cell;
+            _cellByIdCache.Add(cell.Id, cell);
         }
 
         public void Delete(int x, int y)
         {
             Clip(ref x, ref y);
-            _map[x, y] = null;
+            var cell = _map[x, y];
+            if (cell != null)
+            {
+                _cellByIdCache.Remove(cell.Id);
+                _map[x, y] = null;
+            }
         }
 
         /// <summary>
@@ -49,6 +58,12 @@ namespace RG_PSI_PZ2.Helpers
         {
             Clip(ref x, ref y);
             return _map[x, y];
+        }
+
+        public GridMapCell GetById(long id)
+        {
+            _cellByIdCache.TryGetValue(id, out var cell);
+            return cell;
         }
 
         public bool IsTaken(int x, int y)

@@ -2,6 +2,7 @@
 using RG_PSI_PZ2.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,6 +36,8 @@ namespace RG_PSI_PZ2
         {
             var loader = new GeographicXmlLoader();
 
+            // Draw Nodes
+
             var nodeEntities = loader.GetNodeEntities();
             AddToGridMap(nodeEntities, CreateNodeEntityUIElement);
 
@@ -45,6 +48,10 @@ namespace RG_PSI_PZ2
             AddToGridMap(switchEntities, CreateSwitchEntityUIElement);
 
             DrawGridMapToDisplayGrid();
+
+            // Connect Nodes
+            var lineEntities = loader.GetLineEntities();
+            Debug.WriteLine($"Lines: {lineEntities.Count()}");
         }
 
         private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)
