@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace RG_PSI_PZ2.Helpers
 {
@@ -20,8 +21,82 @@ namespace RG_PSI_PZ2.Helpers
         public void Add(int x, int y, GridMapCell cell)
         {
             Clip(ref x, ref y);
+
+            Grid.SetColumn(cell.UIElement, y);
+            Grid.SetRow(cell.UIElement, x);
+
             _map[x, y] = cell;
             _cellByIdCache.Add(cell.Id, cell);
+        }
+
+        public bool TryAddToClosestAvailable(int x, int y, GridMapCell cell)
+        {
+            int iterationLimit = Math.Max(NumCols, NumRows);
+
+            for (int depth = 1; depth < iterationLimit; ++depth)
+            {
+                int bottomRow = x + depth;
+                int topRow = x - depth;
+                int rightCol = y + depth;
+                int leftCol = y - depth;
+
+                for (int i = -depth; i <= depth; ++i)
+                {
+                    int col = y + i;
+                    if (HorizontalTryAdd(col, topRow, bottomRow, cell))
+                    {
+                        return true;
+                    }
+
+                    int row = x + i;
+                    if (VerticalTryAdd(row, leftCol, rightCol, cell))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool VerticalTryAdd(int row, int leftCol, int rightCol, GridMapCell cell)
+        {
+            if (row <= 0 || row >= NumRows)
+            {
+                return false;
+            }
+
+            if (leftCol >= 0 && !IsTaken(row, leftCol))
+            {
+                Add(row, leftCol, cell);
+                return true;
+            }
+            if (rightCol < NumCols && !IsTaken(row, rightCol))
+            {
+                Add(row, rightCol, cell);
+                return true;
+            }
+            return false;
+        }
+
+        private bool HorizontalTryAdd(int col, int topRow, int bottomRow, GridMapCell cell)
+        {
+            if (col <= 0 || col >= NumCols)
+            {
+                return false;
+            }
+
+            if (bottomRow < NumRows && !IsTaken(bottomRow, col))
+            {
+                Add(bottomRow, col, cell);
+                return true;
+            }
+            if (topRow >= 0 && !IsTaken(topRow, col))
+            {
+                Add(topRow, col, cell);
+                return true;
+            }
+            return false;
         }
 
         public void Delete(int x, int y)
@@ -36,7 +111,7 @@ namespace RG_PSI_PZ2.Helpers
         }
 
         /// <summary>
-        /// Calls `action(x, y, cell)` for every cell element
+        /// Calls `action(x, y, cell)` for every cell element.
         /// </summary>
         /// <param name="action"></param>
         public void ForEach(Action<int, int, GridMapCell> action)
@@ -69,7 +144,7 @@ namespace RG_PSI_PZ2.Helpers
         public bool IsTaken(int x, int y)
         {
             Clip(ref x, ref y);
-            return _map[x, y] == null;
+            return _map[x, y] != null;
         }
 
         private void Clip(ref int x, ref int y)

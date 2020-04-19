@@ -6,6 +6,14 @@ namespace RG_PSI_PZ2.Helpers
 {
     public class GridMapCell
     {
+        /// <summary>
+        /// Note: Possible `NullRefferenceException` on `Id`/`Row`/`Column` props if `Value` or/and `UIElement`
+        /// are `null`.
+        /// </summary>
+        public GridMapCell()
+        {
+        }
+
         public GridMapCell(PowerEntity value, FrameworkElement uiElement)
         {
             Value = value;

@@ -66,15 +66,15 @@ namespace RG_PSI_PZ2
 
             foreach (var item in nodeEntities)
             {
-                int gridX = (int)Math.Round(CoordinateConversion.Scale(item.X, minX, maxX, 0, _map.NumRows));
-                int gridY = (int)Math.Round(CoordinateConversion.Scale(item.Y, minY, maxY, 0, _map.NumCols));
+                int row = (int)Math.Round(CoordinateConversion.Scale(item.X, minX, maxX, 0, _map.NumRows));
+                int col = (int)Math.Round(CoordinateConversion.Scale(item.Y, minY, maxY, 0, _map.NumCols));
 
                 var uiElement = createUIElement(item);
 
-                Grid.SetColumn(uiElement, gridY);
-                Grid.SetRow(uiElement, gridX);
-
-                _map.Add(gridX, gridY, new GridMapCell(item, uiElement));
+                if (!_map.TryAddToClosestAvailable(row, col, new GridMapCell(item, uiElement)))
+                {
+                    Debug.WriteLine($"Failed to add cell closest available to ({row}, {col})");
+                }
             }
         }
 
