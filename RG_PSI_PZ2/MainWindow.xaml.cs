@@ -37,21 +37,23 @@ namespace RG_PSI_PZ2
             var loader = new GeographicXmlLoader();
 
             // Draw Nodes
+            var substationEntities = loader.GetSubstationEntities();
+            AddToGridMap(substationEntities, CreateSubstationEntityUIElement);
 
             var nodeEntities = loader.GetNodeEntities();
             AddToGridMap(nodeEntities, CreateNodeEntityUIElement);
-
-            var substationEntities = loader.GetSubstationEntities();
-            AddToGridMap(substationEntities, CreateSubstationEntityUIElement);
 
             var switchEntities = loader.GetSwitchEntities();
             AddToGridMap(switchEntities, CreateSwitchEntityUIElement);
 
             DrawGridMapToDisplayGrid();
 
-            // Connect Nodes
+            // Draw Lines
             var lineEntities = loader.GetLineEntities();
             Debug.WriteLine($"Lines: {lineEntities.Count()}");
+
+            // TODO: Connect nodes for each line (BFS Shortest path)
+            // TODO: Draw lines / created paths
         }
 
         private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)
@@ -95,7 +97,12 @@ namespace RG_PSI_PZ2
 
         private void DrawGridMapToDisplayGrid()
         {
-            _map.ForEach((_, __, cell) => DisplayGrid.Children.Add(cell.UIElement));
+            _map.ForEach((x, y, cell) =>
+            {
+                Grid.SetColumn(cell.UIElement, y);
+                Grid.SetRow(cell.UIElement, x);
+                DisplayGrid.Children.Add(cell.UIElement);
+            });
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 
 namespace RG_PSI_PZ2.Helpers
 {
@@ -21,11 +20,9 @@ namespace RG_PSI_PZ2.Helpers
         public void Add(int x, int y, GridMapCell cell)
         {
             Clip(ref x, ref y);
-
-            Grid.SetColumn(cell.UIElement, y);
-            Grid.SetRow(cell.UIElement, x);
-
             _map[x, y] = cell;
+            cell.Row = x;
+            cell.Column = y;
             _cellByIdCache.Add(cell.Id, cell);
         }
 

@@ -7,8 +7,7 @@ namespace RG_PSI_PZ2.Helpers
     public class GridMapCell
     {
         /// <summary>
-        /// Note: Possible `NullRefferenceException` on `Id`/`Row`/`Column` props if `Value` or/and `UIElement`
-        /// are `null`.
+        /// Note: Possible `NullRefferenceException` on `Id` if `Value` prop is `null`.
         /// </summary>
         public GridMapCell()
         {
@@ -20,11 +19,21 @@ namespace RG_PSI_PZ2.Helpers
             UIElement = uiElement;
         }
 
+        public GridMapCell(int row, int col, PowerEntity value, FrameworkElement uiElement)
+        {
+            Row = row;
+            Column = col;
+            Value = value;
+            UIElement = uiElement;
+        }
+
         public FrameworkElement UIElement { get; set; }
         public PowerEntity Value { get; set; }
 
         public long Id { get => Value.Id; }
-        public int Row { get => Grid.GetRow(UIElement); }
-        public int Column { get => Grid.GetColumn(UIElement); }
+
+        public int Row { set; get; } = -1;
+
+        public int Column { set; get; } = -1;
     }
 }
