@@ -37,6 +37,31 @@ namespace RG_PSI_PZ2.Helpers
             });
         }
 
+        public IEnumerable<LineEntity> GetLineEntities(string xpath = "/NetworkModel/Lines/LineEntity")
+        {
+            var lineEntities = new List<LineEntity>();
+
+            foreach (XmlNode node in _doc.DocumentElement.SelectNodes(xpath))
+            {
+                var line = new LineEntity
+                {
+                    Id = long.Parse(node.SelectSingleNode("Id").InnerText),
+                    Name = node.SelectSingleNode("Name").InnerText,
+                    IsUnderground = node.SelectSingleNode("IsUnderground").InnerText.Equals("true"),
+                    R = float.Parse(node.SelectSingleNode("R").InnerText),
+                    ConductorMaterial = node.SelectSingleNode("ConductorMaterial").InnerText,
+                    LineType = node.SelectSingleNode("LineType").InnerText,
+                    ThermalConstantHeat = long.Parse(node.SelectSingleNode("ThermalConstantHeat").InnerText),
+                    FirstEnd = long.Parse(node.SelectSingleNode("FirstEnd").InnerText),
+                    SecondEnd = long.Parse(node.SelectSingleNode("SecondEnd").InnerText)
+                };
+
+                lineEntities.Add(line);
+            }
+
+            return lineEntities;
+        }
+
         private IEnumerable<T> GetEntities<T>(string xpath, Action<XmlNode, T> action = null) where T : PowerEntity, new()
         {
             var entityList = new List<T>();
