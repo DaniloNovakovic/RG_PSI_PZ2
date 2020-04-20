@@ -20,18 +20,31 @@ namespace RG_PSI_PZ2.Helpers
 
         public void PaintToCanvas(GridMap map)
         {
-            _canvas.Width = map.NumCols * ElementWidth;
-            _canvas.Height = map.NumRows * ElementWidth;
+            _canvas.Width = MapColumnToCanvasLeft(map.NumCols + 1);
+            _canvas.Height = MapRowToCanvasTop(map.NumRows + 1);
 
             map.ForEach((row, col, cell) =>
             {
                 var el = cell.UIElement;
+
                 el.Height = ElementWidth;
                 el.Width = ElementWidth;
-                Canvas.SetTop(el, row * ElementWidth);
-                Canvas.SetLeft(el, col * ElementWidth);
+
+                Canvas.SetTop(el, MapRowToCanvasTop(row));
+                Canvas.SetLeft(el, MapColumnToCanvasLeft(col));
+
                 _canvas.Children.Add(el);
             });
+        }
+
+        private double MapRowToCanvasTop(int row)
+        {
+            return (row * 2 + 1) * ElementWidth;
+        }
+
+        private double MapColumnToCanvasLeft(int column)
+        {
+            return (column * 2 + 1) * ElementWidth;
         }
     }
 }
