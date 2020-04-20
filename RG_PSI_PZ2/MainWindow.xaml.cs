@@ -81,7 +81,7 @@ namespace RG_PSI_PZ2
 
         private FrameworkElement CreateSwitchEntityUIElement(PowerEntity entity)
         {
-            return new Ellipse { Fill = Brushes.GreenYellow, ToolTip = entity };
+            return new Ellipse { Fill = Brushes.DarkGreen, ToolTip = entity };
         }
 
         private void DrawMapToCanvas()
