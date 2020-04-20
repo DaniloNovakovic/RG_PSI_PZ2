@@ -16,20 +16,11 @@ namespace RG_PSI_PZ2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly GridMap _map = new GridMap(200, 200);
+        private readonly GridMap _map = new GridMap(200, 250);
 
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        public void InitGrid()
-        {
-            for (int i = 0; i < _map.NumRows; i++)
-            {
-                DisplayGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(Width / _map.NumCols) });
-                DisplayGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(Height / _map.NumRows) });
-            }
         }
 
         private void LoadXml()
@@ -45,8 +36,6 @@ namespace RG_PSI_PZ2
 
             var switchEntities = loader.GetSwitchEntities();
             AddToGridMap(switchEntities, CreateSwitchEntityUIElement);
-
-            DrawGridMapToDisplayGrid();
 
             // Draw Lines
             var lineEntities = loader.GetLineEntities();
@@ -87,7 +76,7 @@ namespace RG_PSI_PZ2
 
         private FrameworkElement CreateSubstationEntityUIElement(PowerEntity entity)
         {
-            return new Rectangle { Fill = Brushes.OrangeRed, ToolTip = entity };
+            return new Ellipse { Fill = Brushes.OrangeRed, ToolTip = entity };
         }
 
         private FrameworkElement CreateSwitchEntityUIElement(PowerEntity entity)
@@ -95,20 +84,16 @@ namespace RG_PSI_PZ2
             return new Ellipse { Fill = Brushes.GreenYellow, ToolTip = entity };
         }
 
-        private void DrawGridMapToDisplayGrid()
+        private void DrawMapToCanvas()
         {
-            _map.ForEach((x, y, cell) =>
-            {
-                Grid.SetColumn(cell.UIElement, y);
-                Grid.SetRow(cell.UIElement, x);
-                DisplayGrid.Children.Add(cell.UIElement);
-            });
+            var painter = new CanvasPainter(DisplayCanvas);
+            painter.PaintToCanvas(_map);
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
-            InitGrid();
             LoadXml();
+            DrawMapToCanvas();
         }
     }
 }

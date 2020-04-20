@@ -14,11 +14,11 @@
         </Grid.RowDefinitions>
         <Slider Grid.Row="0" Name="_zoom" Minimum="1" Maximum="100" />
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <Grid x:Name="DisplayGrid">
-                <Grid.LayoutTransform>
+            <Canvas x:Name="DisplayCanvas">
+                <Canvas.LayoutTransform>
                     <ScaleTransform ScaleX="{Binding Path=Value, ElementName=_zoom}" ScaleY="{Binding Path=Value, ElementName=_zoom}" />
-                </Grid.LayoutTransform>
-            </Grid>
+                </Canvas.LayoutTransform>
+            </Canvas>
         </ScrollViewer>
     </Grid>
 </Window>
