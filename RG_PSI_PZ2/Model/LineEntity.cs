@@ -2,7 +2,7 @@
 
 namespace RG_PSI_PZ2.Model
 {
-    public class LineEntity
+    public class LineEntity : IEntity
     {
         public long Id { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace RG_PSI_PZ2.Model
 {
-    public class PowerEntity
+    public class PowerEntity : IEntity
     {
         public long Id { get; set; }
 

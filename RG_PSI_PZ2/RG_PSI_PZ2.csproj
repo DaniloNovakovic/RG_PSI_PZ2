@@ -74,6 +74,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\IEntity.cs" />
     <Compile Include="Model\LineEntity.cs" />
     <Compile Include="Model\NodeEntity.cs" />
     <Compile Include="Model\Point.cs" />

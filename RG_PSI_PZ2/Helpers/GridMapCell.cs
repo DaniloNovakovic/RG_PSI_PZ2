@@ -28,7 +28,7 @@ namespace RG_PSI_PZ2.Helpers
         }
 
         public FrameworkElement UIElement { get; set; }
-        public PowerEntity Value { get; set; }
+        public IEntity Value { get; set; }
 
         public long Id { get => Value.Id; }
 
