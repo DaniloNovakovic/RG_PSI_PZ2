@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace RG_PSI_PZ2.Helpers
 {
-    public class GridMapCell
+    public class GridMapCell : GridPoint
     {
         /// <summary>
         /// Note: Possible `NullRefferenceException` on `Id` if `Value` prop is `null`.
@@ -35,9 +35,5 @@ namespace RG_PSI_PZ2.Helpers
         public List<LineEntity> Lines { get; set; } = new List<LineEntity>();
 
         public FrameworkElement UIElement { get; set; }
-
-        public int Row { set; get; } = -1;
-
-        public int Column { set; get; } = -1;
     }
 }

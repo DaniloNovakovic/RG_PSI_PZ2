@@ -56,10 +56,10 @@ namespace RG_PSI_PZ2.Helpers
 
                 _canvas.Children.Add(new Line
                 {
-                    X1 = MapRowToCanvasTop((int)first.X),
-                    Y1 = MapColumnToCanvasLeft((int)first.Y),
-                    X2 = MapRowToCanvasTop((int)second.X),
-                    Y2 = MapColumnToCanvasLeft((int)second.Y),
+                    X1 = MapRowToCanvasTop((int)first.Row),
+                    Y1 = MapColumnToCanvasLeft((int)first.Column),
+                    X2 = MapRowToCanvasTop((int)second.Row),
+                    Y2 = MapColumnToCanvasLeft((int)second.Column),
                     Stroke = LineEntityStroke,
                     StrokeThickness = LineEntityStrokeThickness
                 });
