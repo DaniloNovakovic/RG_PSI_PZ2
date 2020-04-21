@@ -1,6 +1,7 @@
 ﻿using RG_PSI_PZ2.Model;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace RG_PSI_PZ2.Helpers
 {
@@ -27,10 +28,13 @@ namespace RG_PSI_PZ2.Helpers
             UIElement = uiElement;
         }
 
-        public FrameworkElement UIElement { get; set; }
         public IEntity Value { get; set; }
 
         public long Id { get => Value.Id; }
+
+        public List<LineEntity> Lines { get; set; } = new List<LineEntity>();
+
+        public FrameworkElement UIElement { get; set; }
 
         public int Row { set; get; } = -1;
 

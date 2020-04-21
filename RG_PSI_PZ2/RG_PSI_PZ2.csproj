@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\BFS.cs" />
     <Compile Include="Helpers\CanvasPainter.cs" />
     <Compile Include="Helpers\CoordinateConversion.cs" />
     <Compile Include="Helpers\GeographicXmlLoader.cs" />

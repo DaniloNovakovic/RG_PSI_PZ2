@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RG_PSI_PZ2.Model;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,8 +8,13 @@ namespace RG_PSI_PZ2.Helpers
     public class CanvasPainter
     {
         public int ElementWidth { get; set; }
+        private int ElementHeight { get => ElementWidth; }
+
         public Brush GridLineStroke { get; set; } = Brushes.Black;
         public double GridLineStrokeThickness { get; set; } = 0.1;
+
+        public Brush LineEntityStroke { get; set; } = Brushes.Red;
+        public double LineEntityStrokeThickness { get; set; } = 0.1;
 
         private readonly Canvas _canvas;
 
@@ -34,20 +35,41 @@ namespace RG_PSI_PZ2.Helpers
             {
                 var el = cell.UIElement;
 
-                el.Height = ElementWidth;
+                el.Height = ElementHeight;
                 el.Width = ElementWidth;
 
-                Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (ElementWidth / 2));
+                Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (ElementHeight / 2));
                 Canvas.SetLeft(el, MapColumnToCanvasLeft(cell.Column) - (ElementWidth / 2));
 
                 _canvas.Children.Add(el);
+
+                cell.Lines.ForEach(DrawLineEntity);
             });
+        }
+
+        private void DrawLineEntity(LineEntity line)
+        {
+            for (int i = 0; i < line.Vertices.Count - 1; ++i)
+            {
+                var first = line.Vertices[i];
+                var second = line.Vertices[i + 1];
+
+                _canvas.Children.Add(new Line
+                {
+                    X1 = MapRowToCanvasTop((int)first.X),
+                    Y1 = MapColumnToCanvasLeft((int)first.Y),
+                    X2 = MapRowToCanvasTop((int)second.X),
+                    Y2 = MapColumnToCanvasLeft((int)second.Y),
+                    Stroke = LineEntityStroke,
+                    StrokeThickness = LineEntityStrokeThickness
+                });
+            }
         }
 
         private void DrawLines()
         {
             // Draw Horizontal lines
-            for (int i = 0; i < _canvas.Height; i += ElementWidth)
+            for (int i = 0; i < _canvas.Height; i += ElementHeight)
             {
                 _canvas.Children.Add(new Line
                 {
@@ -77,7 +99,7 @@ namespace RG_PSI_PZ2.Helpers
 
         private double MapRowToCanvasTop(int row)
         {
-            return row * ElementWidth;
+            return row * ElementHeight;
         }
 
         private double MapColumnToCanvasLeft(int column)

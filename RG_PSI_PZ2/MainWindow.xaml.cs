@@ -43,8 +43,24 @@ namespace RG_PSI_PZ2
             var lineEntities = loader.GetLineEntities();
             Debug.WriteLine($"Lines: {lineEntities.Count()}");
 
-            // TODO: Connect nodes for each line (BFS Shortest path)
-            // TODO: Draw lines / created paths
+            ConnectNodes(lineEntities);
+        }
+
+        private void ConnectNodes(IEnumerable<LineEntity> lineEntities)
+        {
+            foreach (var line in lineEntities)
+            {
+                var start = _map.GetById(line.FirstEnd);
+                var end = _map.GetById(line.SecondEnd);
+
+                if (start == null || end == null)
+                {
+                    continue;
+                }
+
+                line.Vertices = BFS.GetShortestPath(start, end, _map);
+                start.Lines.Add(line);
+            }
         }
 
         private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)
