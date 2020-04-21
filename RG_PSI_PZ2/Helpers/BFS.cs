@@ -14,18 +14,11 @@ namespace RG_PSI_PZ2.Helpers
         public static List<GridPoint> GetShortestPath(GridMapCell start, GridMapCell end, GridMap map)
         {
             var shortestPath = new List<GridPoint>();
-
             var q = new Queue<GridPoint>();
-
-            int moveCount = 0;
-            int nodesLeftInLayer = 1;
-            int nodesInNextLayer = 0;
-
-            bool reachedEnd = false;
-            var visited = new bool[map.NumRows, map.NumCols];
+            var prev = new GridPoint[map.NumRows, map.NumCols];
 
             q.Enqueue(start);
-            visited[start.Row, start.Column] = true;
+            prev[start.Row, start.Column] = start;
 
             while (q.Count > 0)
             {
@@ -33,7 +26,6 @@ namespace RG_PSI_PZ2.Helpers
 
                 if (point.Row == end.Row && point.Column == end.Column)
                 {
-                    reachedEnd = true;
                     break;
                 }
 
@@ -47,25 +39,23 @@ namespace RG_PSI_PZ2.Helpers
                     if (rr >= map.NumRows || cc >= map.NumCols) continue;
 
                     // Skip visited locations or blocked cells
-                    if (visited[rr, cc]) continue;
-                    if (rr != end.Row && map.IsTaken(rr, cc)) continue;
+                    if (prev[rr, cc] != null) continue;
+                    if ((rr != end.Row || cc != end.Column) && map.IsTaken(rr, cc)) continue;
 
                     // (rr, cc) is a neighbouring cell of (r,c)
                     q.Enqueue(new GridPoint(rr, cc));
-                    visited[rr, cc] = true;
-                    ++nodesInNextLayer;
-                }
-
-                if (--nodesLeftInLayer == 0)
-                {
-                    nodesLeftInLayer = nodesInNextLayer;
-                    nodesInNextLayer = 0;
-                    ++moveCount;
+                    prev[rr, cc] = point;
                 }
             }
 
-            moveCount = reachedEnd ? moveCount : -1;
-            Debug.WriteLine($"MoveCount: {moveCount}");
+            shortestPath.Add(end);
+            var currPrev = prev[end.Row, end.Column];
+            while (currPrev != null && currPrev != start)
+            {
+                shortestPath.Add(currPrev);
+                currPrev = prev[currPrev.Row, currPrev.Column];
+            }
+            shortestPath.Add(currPrev);
 
             return shortestPath;
         }

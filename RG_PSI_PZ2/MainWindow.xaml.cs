@@ -48,7 +48,7 @@ namespace RG_PSI_PZ2
 
         private void ConnectNodes(IEnumerable<LineEntity> lineEntities)
         {
-            foreach (var line in lineEntities.Take(5))
+            foreach (var line in lineEntities)
             {
                 var start = _map.GetById(line.FirstEnd);
                 var end = _map.GetById(line.SecondEnd);

@@ -14,7 +14,7 @@ namespace RG_PSI_PZ2.Helpers
         public double GridLineStrokeThickness { get; set; } = 0.1;
 
         public Brush LineEntityStroke { get; set; } = Brushes.Red;
-        public double LineEntityStrokeThickness { get; set; } = 0.1;
+        public double LineEntityStrokeThickness { get; set; } = 0.5;
 
         private readonly Canvas _canvas;
 
@@ -56,10 +56,10 @@ namespace RG_PSI_PZ2.Helpers
 
                 _canvas.Children.Add(new Line
                 {
-                    X1 = MapRowToCanvasTop((int)first.Row),
-                    Y1 = MapColumnToCanvasLeft((int)first.Column),
-                    X2 = MapRowToCanvasTop((int)second.Row),
-                    Y2 = MapColumnToCanvasLeft((int)second.Column),
+                    X1 = MapColumnToCanvasLeft(first.Column),
+                    Y1 = MapRowToCanvasTop(first.Row),
+                    X2 = MapColumnToCanvasLeft(second.Column),
+                    Y2 = MapRowToCanvasTop(second.Row),
                     Stroke = LineEntityStroke,
                     StrokeThickness = LineEntityStrokeThickness
                 });
