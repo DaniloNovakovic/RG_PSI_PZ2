@@ -30,15 +30,15 @@ namespace RG_PSI_PZ2.Helpers
 
             DrawLines();
 
-            map.ForEach((row, col, cell) =>
+            map.ForEach(cell =>
             {
                 var el = cell.UIElement;
 
                 el.Height = ElementWidth;
                 el.Width = ElementWidth;
 
-                Canvas.SetTop(el, MapRowToCanvasTop(row) - ElementWidth / 2);
-                Canvas.SetLeft(el, MapColumnToCanvasLeft(col) - ElementWidth / 2);
+                Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (ElementWidth / 2));
+                Canvas.SetLeft(el, MapColumnToCanvasLeft(cell.Column) - (ElementWidth / 2));
 
                 _canvas.Children.Add(el);
             });
@@ -77,12 +77,12 @@ namespace RG_PSI_PZ2.Helpers
 
         private double MapRowToCanvasTop(int row)
         {
-            return (row * 2 + 1) * ElementWidth;
+            return row * ElementWidth;
         }
 
         private double MapColumnToCanvasLeft(int column)
         {
-            return (column * 2 + 1) * ElementWidth;
+            return column * ElementWidth;
         }
     }
 }

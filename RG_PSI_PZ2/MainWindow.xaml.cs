@@ -37,6 +37,8 @@ namespace RG_PSI_PZ2
             var switchEntities = loader.GetSwitchEntities();
             AddToGridMap(switchEntities, CreateSwitchEntityUIElement);
 
+            _map.Enlarge();
+
             // Draw Lines
             var lineEntities = loader.GetLineEntities();
             Debug.WriteLine($"Lines: {lineEntities.Count()}");

@@ -5,7 +5,7 @@ namespace RG_PSI_PZ2.Helpers
 {
     public class GridMap
     {
-        private readonly GridMapCell[,] _map;
+        private GridMapCell[,] _map;
         private readonly Dictionary<long, GridMapCell> _cellByIdCache;
 
         public GridMap(int numRows, int numCols)
@@ -24,6 +24,33 @@ namespace RG_PSI_PZ2.Helpers
             cell.Row = x;
             cell.Column = y;
             _cellByIdCache.Add(cell.Id, cell);
+        }
+
+        /// <summary>
+        /// Adds extra empty cell around each element in matrix, therefore enlargening the matrix
+        /// </summary>
+        public void Enlarge()
+        {
+            int nRows = EnlargeRow(NumRows);
+            int nCols = EnlargeColumn(NumCols);
+            var newMap = new GridMapCell[nRows, nCols];
+            ForEach(cell =>
+            {
+                cell.Row = EnlargeRow(cell.Row);
+                cell.Column = EnlargeColumn(cell.Column);
+                newMap[cell.Row, cell.Column] = cell;
+            });
+            _map = newMap;
+        }
+
+        private int EnlargeRow(int row)
+        {
+            return (row * 2) + 1;
+        }
+
+        private int EnlargeColumn(int col)
+        {
+            return EnlargeRow(col);
         }
 
         public bool TryAddToClosestAvailable(int x, int y, GridMapCell cell)
@@ -111,7 +138,7 @@ namespace RG_PSI_PZ2.Helpers
         /// Calls `action(x, y, cell)` for every cell element.
         /// </summary>
         /// <param name="action"></param>
-        public void ForEach(Action<int, int, GridMapCell> action)
+        public void ForEach(Action<GridMapCell> action)
         {
             for (int x = 0; x < NumRows; ++x)
             {
@@ -120,7 +147,7 @@ namespace RG_PSI_PZ2.Helpers
                     var cell = _map[x, y];
                     if (cell != null)
                     {
-                        action(x, y, cell);
+                        action(cell);
                     }
                 }
             }
