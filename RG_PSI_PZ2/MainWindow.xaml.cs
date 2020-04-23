@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -58,9 +57,27 @@ namespace RG_PSI_PZ2
                     continue;
                 }
 
-                line.Vertices = BFS.GetShortestPath(start, end, _map);
+                // Prev line is obstacle
+                line.Vertices = BFS.GetShortestPath(start, end, _map, isObstacle: IsNotNull);
+                if (line.Vertices.Count < 2)
+                {
+                    // Prev line is not obstacle
+                    line.Vertices = BFS.GetShortestPath(start, end, _map, isObstacle: IsPowerEntity);
+                }
+
                 start.Lines.Add(line);
+                _map.Connect(line.Vertices);
             }
+        }
+
+        private bool IsNotNull(int rr, int cc)
+        {
+            return _map.Get(rr, cc) != null;
+        }
+
+        private bool IsPowerEntity(int rr, int cc)
+        {
+            return _map.Get(rr, cc)?.Id != null;
         }
 
         private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)

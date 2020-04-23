@@ -13,11 +13,13 @@ namespace RG_PSI_PZ2.Helpers
         public int ElementWidth { get; set; }
         private int ElementHeight { get => ElementWidth; }
 
-        public Brush GridLineStroke { get; set; } = Brushes.Black;
+        public Brush GridLineStroke { get; set; } = Brushes.Gray;
         public double GridLineStrokeThickness { get; set; } = 0.1;
 
         public Brush LineEntityStroke { get; set; } = Brushes.Red;
         public double LineEntityStrokeThickness { get; set; } = 0.3;
+
+        public Brush LineCrossFill { get; set; } = Brushes.Black;
 
         private readonly Canvas _canvas;
 
@@ -41,11 +43,22 @@ namespace RG_PSI_PZ2.Helpers
             {
                 var el = cell.UIElement;
 
-                el.Height = ElementHeight;
-                el.Width = ElementWidth;
+                if (el == null)
+                {
+                    if (cell.ConnectedTo.Count <= 2)
+                    {
+                        return;
+                    }
+                    el = new Ellipse { Fill = LineCrossFill, Height = ElementHeight / 2, Width = ElementWidth / 2 };
+                }
+                else
+                {
+                    el.Height = ElementHeight;
+                    el.Width = ElementWidth;
+                }
 
-                Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (ElementHeight / 2));
-                Canvas.SetLeft(el, MapColumnToCanvasLeft(cell.Column) - (ElementWidth / 2));
+                Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (el.Height / 2));
+                Canvas.SetLeft(el, MapColumnToCanvasLeft(cell.Column) - (el.Width / 2));
 
                 nodes.Add(el);
 

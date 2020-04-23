@@ -1,17 +1,18 @@
 ﻿using RG_PSI_PZ2.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace RG_PSI_PZ2.Helpers
 {
-    public class BFS
+    public static class BFS
     {
         // Direction vectors for north, south, east, and west
         private readonly static List<int> dr = new List<int> { -1, +1, 0, 0 };
 
         private readonly static List<int> dc = new List<int> { 0, 0, +1, -1 };
 
-        public static List<GridPoint> GetShortestPath(GridMapCell start, GridMapCell end, GridMap map)
+        public static List<GridPoint> GetShortestPath(GridMapCell start, GridMapCell end, GridMap map, Func<int, int, bool> isObstacle)
         {
             var shortestPath = new List<GridPoint>();
             var q = new Queue<GridPoint>();
@@ -20,12 +21,15 @@ namespace RG_PSI_PZ2.Helpers
             q.Enqueue(start);
             prev[start.Row, start.Column] = start;
 
+            bool pathFound = false;
+
             while (q.Count > 0)
             {
                 var point = q.Dequeue();
 
                 if (point.Row == end.Row && point.Column == end.Column)
                 {
+                    pathFound = true;
                     break;
                 }
 
@@ -40,7 +44,7 @@ namespace RG_PSI_PZ2.Helpers
 
                     // Skip visited locations or blocked cells
                     if (prev[rr, cc] != null) continue;
-                    if ((rr != end.Row || cc != end.Column) && map.IsTaken(rr, cc)) continue;
+                    if (IsNotEndNode(rr, cc, end) && (isObstacle?.Invoke(rr, cc) ?? false)) continue;
 
                     // (rr, cc) is a neighbouring cell of (r,c)
                     q.Enqueue(new GridPoint(rr, cc));
@@ -48,16 +52,24 @@ namespace RG_PSI_PZ2.Helpers
                 }
             }
 
-            shortestPath.Add(end);
-            var currPrev = prev[end.Row, end.Column];
-            while (currPrev != null && currPrev != start)
+            if (pathFound)
             {
+                shortestPath.Add(end);
+                var currPrev = prev[end.Row, end.Column];
+                while (currPrev != null && currPrev != start)
+                {
+                    shortestPath.Add(currPrev);
+                    currPrev = prev[currPrev.Row, currPrev.Column];
+                }
                 shortestPath.Add(currPrev);
-                currPrev = prev[currPrev.Row, currPrev.Column];
             }
-            shortestPath.Add(currPrev);
 
             return shortestPath;
+        }
+
+        private static bool IsNotEndNode(int rr, int cc, GridMapCell end)
+        {
+            return rr != end.Row || cc != end.Column;
         }
     }
 }

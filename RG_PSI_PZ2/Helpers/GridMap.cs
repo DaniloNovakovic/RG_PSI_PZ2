@@ -1,5 +1,8 @@
-﻿using System;
+﻿using RG_PSI_PZ2.Model;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace RG_PSI_PZ2.Helpers
 {
@@ -17,13 +20,51 @@ namespace RG_PSI_PZ2.Helpers
         public int NumCols => _map.GetLength(1);
         public int NumRows => _map.GetLength(0);
 
-        public void Add(int x, int y, GridMapCell cell)
+        public void AddOrUpdate(int x, int y, GridMapCell cell)
         {
             Clip(ref x, ref y);
             _map[x, y] = cell;
             cell.Row = x;
             cell.Column = y;
-            _cellByIdCache.Add(cell.Id, cell);
+            if (cell.Id != null)
+            {
+                _cellByIdCache.Add(cell.Id.Value, cell);
+            }
+        }
+
+        public void Connect(GridPoint source, GridPoint dest)
+        {
+            var leftCell = _map[source.Row, source.Column] ?? new GridMapCell { Row = source.Row, Column = source.Column };
+            var rightCell = _map[dest.Row, dest.Column] ?? new GridMapCell { Row = dest.Row, Column = dest.Column };
+
+            if (!leftCell.ConnectedTo.Any(p => AreSamePosition(p, dest)))
+            {
+                leftCell.ConnectedTo.Add(dest);
+            }
+
+            if (!rightCell.ConnectedTo.Any(p => AreSamePosition(p, source)))
+            {
+                rightCell.ConnectedTo.Add(source);
+            }
+
+            _map[source.Row, source.Column] = leftCell;
+            _map[dest.Row, dest.Column] = rightCell;
+        }
+
+        private static bool AreSamePosition(GridPoint left, GridPoint right)
+        {
+            return left.Row == right.Row && left.Column == right.Column;
+        }
+
+        public void Connect(IList<GridPoint> points)
+        {
+            for (int i = 0; i < points.Count - 1; ++i)
+            {
+                var source = points[i];
+                var dest = points[i + 1];
+
+                Connect(source, dest);
+            }
         }
 
         /// <summary>
@@ -92,12 +133,12 @@ namespace RG_PSI_PZ2.Helpers
 
             if (leftCol >= 0 && !IsTaken(row, leftCol))
             {
-                Add(row, leftCol, cell);
+                AddOrUpdate(row, leftCol, cell);
                 return true;
             }
             if (rightCol < NumCols && !IsTaken(row, rightCol))
             {
-                Add(row, rightCol, cell);
+                AddOrUpdate(row, rightCol, cell);
                 return true;
             }
             return false;
@@ -112,12 +153,12 @@ namespace RG_PSI_PZ2.Helpers
 
             if (bottomRow < NumRows && !IsTaken(bottomRow, col))
             {
-                Add(bottomRow, col, cell);
+                AddOrUpdate(bottomRow, col, cell);
                 return true;
             }
             if (topRow >= 0 && !IsTaken(topRow, col))
             {
-                Add(topRow, col, cell);
+                AddOrUpdate(topRow, col, cell);
                 return true;
             }
             return false;
@@ -127,9 +168,9 @@ namespace RG_PSI_PZ2.Helpers
         {
             Clip(ref x, ref y);
             var cell = _map[x, y];
-            if (cell != null)
+            if (cell?.Id != null)
             {
-                _cellByIdCache.Remove(cell.Id);
+                _cellByIdCache.Remove(cell.Id.Value);
                 _map[x, y] = null;
             }
         }

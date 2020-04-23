@@ -30,9 +30,11 @@ namespace RG_PSI_PZ2.Helpers
 
         public IEntity Value { get; set; }
 
-        public long Id { get => Value.Id; }
+        public long? Id { get => Value?.Id; }
 
         public List<LineEntity> Lines { get; set; } = new List<LineEntity>();
+
+        public List<GridPoint> ConnectedTo { get; set; } = new List<GridPoint>();
 
         public FrameworkElement UIElement { get; set; }
     }
