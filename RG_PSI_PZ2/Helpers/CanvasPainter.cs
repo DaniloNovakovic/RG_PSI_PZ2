@@ -1,4 +1,7 @@
 ﻿using RG_PSI_PZ2.Model;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -14,7 +17,7 @@ namespace RG_PSI_PZ2.Helpers
         public double GridLineStrokeThickness { get; set; } = 0.1;
 
         public Brush LineEntityStroke { get; set; } = Brushes.Red;
-        public double LineEntityStrokeThickness { get; set; } = 0.5;
+        public double LineEntityStrokeThickness { get; set; } = 0.3;
 
         private readonly Canvas _canvas;
 
@@ -29,7 +32,10 @@ namespace RG_PSI_PZ2.Helpers
             _canvas.Width = MapColumnToCanvasLeft(map.NumCols + 1);
             _canvas.Height = MapRowToCanvasTop(map.NumRows + 1);
 
-            DrawLines();
+            DrawGridLines();
+
+            var nodes = new List<FrameworkElement>();
+            var lines = new List<Line>();
 
             map.ForEach(cell =>
             {
@@ -41,32 +47,45 @@ namespace RG_PSI_PZ2.Helpers
                 Canvas.SetTop(el, MapRowToCanvasTop(cell.Row) - (ElementHeight / 2));
                 Canvas.SetLeft(el, MapColumnToCanvasLeft(cell.Column) - (ElementWidth / 2));
 
-                _canvas.Children.Add(el);
+                nodes.Add(el);
 
-                cell.Lines.ForEach(DrawLineEntity);
+                cell.Lines.ForEach(line => lines.AddRange(CreateLines(line)));
             });
+
+            var filteredLines = RemoveDuplicates(lines);
+            filteredLines.ForEach(line => _canvas.Children.Add(line));
+            nodes.ForEach(node => _canvas.Children.Add(node));
         }
 
-        private void DrawLineEntity(LineEntity line)
+        private List<Line> RemoveDuplicates(List<Line> lines)
         {
+            var comparer = new LineEqualityComparer();
+            return lines.Distinct(comparer).ToList();
+        }
+
+        private List<Line> CreateLines(LineEntity line)
+        {
+            var lines = new List<Line>();
             for (int i = 0; i < line.Vertices.Count - 1; ++i)
             {
                 var first = line.Vertices[i];
                 var second = line.Vertices[i + 1];
 
-                _canvas.Children.Add(new Line
+                lines.Add(new Line
                 {
                     X1 = MapColumnToCanvasLeft(first.Column),
                     Y1 = MapRowToCanvasTop(first.Row),
                     X2 = MapColumnToCanvasLeft(second.Column),
                     Y2 = MapRowToCanvasTop(second.Row),
                     Stroke = LineEntityStroke,
-                    StrokeThickness = LineEntityStrokeThickness
+                    StrokeThickness = LineEntityStrokeThickness,
+                    ToolTip = line
                 });
             }
+            return lines;
         }
 
-        private void DrawLines()
+        private void DrawGridLines()
         {
             // Draw Horizontal lines
             for (int i = 0; i < _canvas.Height; i += ElementHeight)

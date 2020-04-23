@@ -69,6 +69,7 @@
     <Compile Include="Helpers\GeographicXmlLoader.cs" />
     <Compile Include="Helpers\GridMap.cs" />
     <Compile Include="Helpers\GridMapCell.cs" />
+    <Compile Include="Helpers\LineEqualityComparer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

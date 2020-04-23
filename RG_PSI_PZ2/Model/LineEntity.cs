@@ -23,5 +23,10 @@ namespace RG_PSI_PZ2.Model
         public long SecondEnd { get; set; }
 
         public List<GridPoint> Vertices { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id: {Id}, Name: {Name}";
+        }
     }
 }
