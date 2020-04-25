@@ -1,11 +1,14 @@
 ﻿using RG_PSI_PZ2.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace RG_PSI_PZ2.Helpers
 {
-    public class GridMapCell : GridPoint
+    public class GridMapCell : GridPoint, IComparable
     {
         /// <summary>
         /// Note: Possible `NullRefferenceException` on `Id` if `Value` prop is `null`.
@@ -14,18 +17,17 @@ namespace RG_PSI_PZ2.Helpers
         {
         }
 
-        public GridMapCell(PowerEntity value, FrameworkElement uiElement)
+        public GridMapCell(PowerEntity value, Shape uiElement)
         {
             Value = value;
             UIElement = uiElement;
+            Color = uiElement.Fill;
         }
 
-        public GridMapCell(int row, int col, PowerEntity value, FrameworkElement uiElement)
+        public GridMapCell(int row, int col, PowerEntity value, Shape uiElement) : this(value, uiElement)
         {
             Row = row;
             Column = col;
-            Value = value;
-            UIElement = uiElement;
         }
 
         public IEntity Value { get; set; }
@@ -36,6 +38,25 @@ namespace RG_PSI_PZ2.Helpers
 
         public List<GridPoint> ConnectedTo { get; set; } = new List<GridPoint>();
 
-        public FrameworkElement UIElement { get; set; }
+        public Brush Color { get; set; } = Brushes.Black;
+
+        public Brush HighlightedColor { get; set; } = Brushes.Pink;
+
+        public Shape UIElement { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            return ToString().CompareTo(obj?.ToString() ?? "");
+        }
+
+        public override string ToString()
+        {
+            return $"{Id}, {Row}, {Column}";
+        }
+
+        public bool Equals(GridMapCell obj)
+        {
+            return Id == obj.Id && Row == obj.Row && Column == obj.Column;
+        }
     }
 }

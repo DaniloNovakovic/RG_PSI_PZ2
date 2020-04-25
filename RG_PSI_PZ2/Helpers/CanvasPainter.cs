@@ -1,4 +1,5 @@
 ﻿using RG_PSI_PZ2.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -22,11 +23,13 @@ namespace RG_PSI_PZ2.Helpers
         public Brush LineCrossFill { get; set; } = Brushes.Black;
 
         private readonly Canvas _canvas;
+        private readonly Action<GridPoint, GridPoint> _onLineClick;
 
-        public CanvasPainter(Canvas canvas, int elementWidth = 2)
+        public CanvasPainter(Canvas canvas, int elementWidth = 2, Action<GridPoint, GridPoint> onLineClick = null)
         {
             ElementWidth = elementWidth;
             _canvas = canvas;
+            _onLineClick = onLineClick;
         }
 
         public void PaintToCanvas(GridMap map)
@@ -84,7 +87,7 @@ namespace RG_PSI_PZ2.Helpers
                 var first = line.Vertices[i];
                 var second = line.Vertices[i + 1];
 
-                lines.Add(new Line
+                var uiLine = new Line
                 {
                     X1 = MapColumnToCanvasLeft(first.Column),
                     Y1 = MapRowToCanvasTop(first.Row),
@@ -93,9 +96,16 @@ namespace RG_PSI_PZ2.Helpers
                     Stroke = LineEntityStroke,
                     StrokeThickness = LineEntityStrokeThickness,
                     ToolTip = line
-                });
+                };
+                AttachHandlersToLine(first, second, uiLine);
+                lines.Add(uiLine);
             }
             return lines;
+        }
+
+        private void AttachHandlersToLine(GridPoint first, GridPoint second, Line line)
+        {
+            line.MouseRightButtonUp += (s, e) => _onLineClick?.Invoke(first, second);
         }
 
         private void DrawGridLines()

@@ -79,10 +79,15 @@ namespace RG_PSI_PZ2
 
         private bool IsPowerEntity(int rr, int cc)
         {
-            return _map.Get(rr, cc)?.Id != null;
+            return IsPowerEntity(_map.Get(rr, cc));
         }
 
-        private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, FrameworkElement> createUIElement)
+        private bool IsPowerEntity(GridMapCell cell)
+        {
+            return cell?.Id != null;
+        }
+
+        private void AddToGridMap(IEnumerable<PowerEntity> nodeEntities, Func<PowerEntity, Shape> createUIElement)
         {
             var xCoords = nodeEntities.Select(e => e.X).ToList();
             var yCoords = nodeEntities.Select(e => e.Y).ToList();
@@ -106,24 +111,24 @@ namespace RG_PSI_PZ2
             }
         }
 
-        private FrameworkElement CreateNodeEntityUIElement(PowerEntity entity)
+        private Shape CreateNodeEntityUIElement(PowerEntity entity)
         {
             return CreateEllipse(Brushes.Purple, entity);
         }
 
-        private FrameworkElement CreateSubstationEntityUIElement(PowerEntity entity)
+        private Shape CreateSubstationEntityUIElement(PowerEntity entity)
         {
             return CreateEllipse(Brushes.OrangeRed, entity);
         }
 
-        private FrameworkElement CreateSwitchEntityUIElement(PowerEntity entity)
+        private Shape CreateSwitchEntityUIElement(PowerEntity entity)
         {
             return CreateEllipse(Brushes.DarkGreen, entity);
         }
 
         private Ellipse CreateEllipse(Brush Fill, object ToolTip)
         {
-            var e = new Ellipse { Fill = Fill, ToolTip = ToolTip };
+            var e = new Ellipse { Fill = Fill, ToolTip = ToolTip, Stroke = Brushes.Black, StrokeThickness = 0.1 };
             e.MouseLeftButtonDown += OnEllipseMouseClick;
             return e;
         }
@@ -146,8 +151,114 @@ namespace RG_PSI_PZ2
 
         private void DrawMapToCanvas()
         {
-            var painter = new CanvasPainter(_canvas);
+            var painter = new CanvasPainter(_canvas, onLineClick: FindAndHighlightConnectedNodes);
             painter.PaintToCanvas(_map);
+        }
+
+        private void FindAndHighlightConnectedNodes(GridPoint lineFrom, GridPoint lineTo)
+        {
+            var fromCell = _map.Get(lineFrom.Row, lineFrom.Column);
+            var toCell = _map.Get(lineTo.Row, lineTo.Column);
+
+            var cellsToHighlight = new List<GridMapCell>();
+
+            if (IsPowerEntity(fromCell) && IsPowerEntity(toCell))
+            {
+                cellsToHighlight.Add(fromCell);
+                cellsToHighlight.Add(toCell);
+                HighlightCells(cellsToHighlight);
+                return;
+            }
+
+            var q = new Queue<GridMapCell>();
+            GridMapCell start = !IsPowerEntity(fromCell) ? fromCell : toCell;
+            q.Enqueue(start);
+
+            bool[,] visited = new bool[_map.NumRows, _map.NumCols];
+
+            while (q.Count > 0)
+            {
+                var cell = q.Dequeue();
+
+                if (cell == null)
+                {
+                    continue;
+                }
+
+                if (IsPowerEntity(cell))
+                {
+                    cellsToHighlight.Add(cell);
+                    continue;
+                }
+
+                foreach (var point in cell.ConnectedTo)
+                {
+                    if (visited[point.Row, point.Column])
+                    {
+                        continue;
+                    }
+
+                    var neighborCell = _map.Get(point.Row, point.Column);
+                    q.Enqueue(neighborCell);
+                    visited[neighborCell.Row, neighborCell.Column] = true;
+                }
+            }
+
+            HighlightCells(cellsToHighlight);
+        }
+
+        private static readonly List<GridMapCell> prevHighlighted = new List<GridMapCell>();
+
+        private bool ContainsSameElements(List<GridMapCell> first, List<GridMapCell> second)
+        {
+            if (first.Count != second.Count)
+            {
+                return false;
+            }
+
+            first.Sort();
+            second.Sort();
+
+            for (int i = 0; i < first.Count; ++i)
+            {
+                var f = first[i];
+                var s = second[i];
+                if (f.Row != s.Row || f.Column != s.Column)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void HighlightCells(List<GridMapCell> cellsToHighlight)
+        {
+            UnhiglightCells(prevHighlighted);
+
+            if (ContainsSameElements(prevHighlighted, cellsToHighlight))
+            {
+                prevHighlighted.Clear();
+                return;
+            }
+
+            prevHighlighted.Clear();
+
+            foreach (var cell in cellsToHighlight)
+            {
+                var shape = cell.UIElement;
+                shape.Fill = cell.HighlightedColor;
+            }
+
+            prevHighlighted.AddRange(cellsToHighlight);
+        }
+
+        private void UnhiglightCells(IEnumerable<GridMapCell> cellsToUnhiglight)
+        {
+            foreach (var cell in cellsToUnhiglight)
+            {
+                var shape = cell.UIElement;
+                shape.Fill = cell.Color;
+            }
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)

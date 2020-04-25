@@ -212,6 +212,12 @@ namespace RG_PSI_PZ2.Helpers
             return _map[x, y] != null;
         }
 
+        public bool IsPowerEntity(int x, int y)
+        {
+            Clip(ref x, ref y);
+            return _map[x, y]?.Id != null;
+        }
+
         private void Clip(ref int x, ref int y)
         {
             x = Clip(x, min: 0, max: NumRows - 1);
