@@ -20,7 +20,7 @@ namespace RG_PSI_PZ2.Helpers
         public Brush LineEntityStroke { get; set; } = Brushes.Red;
         public double LineEntityStrokeThickness { get; set; } = 0.3;
 
-        public Brush LineCrossFill { get; set; } = Brushes.Black;
+        public Brush LineCrossFill { get; set; } = Brushes.DarkGray;
 
         private readonly Canvas _canvas;
         private readonly Action<GridPoint, GridPoint> _onLineClick;
@@ -52,7 +52,7 @@ namespace RG_PSI_PZ2.Helpers
                     {
                         return;
                     }
-                    el = new Ellipse { Fill = LineCrossFill, Height = ElementHeight / 2, Width = ElementWidth / 2 };
+                    el = new Ellipse { Fill = LineCrossFill, Stroke = Brushes.Black, StrokeThickness = 0.1, Height = ElementHeight / 2, Width = ElementWidth / 2 };
                 }
                 else
                 {
