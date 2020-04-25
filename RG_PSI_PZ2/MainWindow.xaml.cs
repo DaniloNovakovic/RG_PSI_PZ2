@@ -16,6 +16,8 @@ namespace RG_PSI_PZ2
     public partial class MainWindow : Window
     {
         private readonly GridMap _map = new GridMap(200, 250);
+        private bool _zoomed;
+        private double _zoomFactor = 2;
 
         public MainWindow()
         {
@@ -106,22 +108,45 @@ namespace RG_PSI_PZ2
 
         private FrameworkElement CreateNodeEntityUIElement(PowerEntity entity)
         {
-            return new Ellipse { Fill = Brushes.Purple, ToolTip = entity };
+            return CreateEllipse(Brushes.Purple, entity);
         }
 
         private FrameworkElement CreateSubstationEntityUIElement(PowerEntity entity)
         {
-            return new Ellipse { Fill = Brushes.OrangeRed, ToolTip = entity };
+            return CreateEllipse(Brushes.OrangeRed, entity);
         }
 
         private FrameworkElement CreateSwitchEntityUIElement(PowerEntity entity)
         {
-            return new Ellipse { Fill = Brushes.DarkGreen, ToolTip = entity };
+            return CreateEllipse(Brushes.DarkGreen, entity);
+        }
+
+        private Ellipse CreateEllipse(Brush Fill, object ToolTip)
+        {
+            var e = new Ellipse { Fill = Fill, ToolTip = ToolTip };
+            e.MouseLeftButtonDown += OnEllipseMouseClick;
+            return e;
+        }
+
+        private void OnEllipseMouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_zoomed)
+            {
+                _zoom.Value -= _zoomFactor;
+            }
+            else
+            {
+                _zoom.Value += _zoomFactor;
+            }
+            _zoomed = !_zoomed;
+
+            var ellipse = (Ellipse)sender;
+            ellipse.BringIntoView();
         }
 
         private void DrawMapToCanvas()
         {
-            var painter = new CanvasPainter(DisplayCanvas);
+            var painter = new CanvasPainter(_canvas);
             painter.PaintToCanvas(_map);
         }
 
