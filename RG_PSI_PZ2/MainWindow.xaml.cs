@@ -17,7 +17,7 @@ namespace RG_PSI_PZ2
     {
         private readonly GridMap _map = new GridMap(200, 250);
         private bool _zoomed;
-        private double _zoomFactor = 2;
+        private readonly double _zoomFactor = 2;
 
         public MainWindow()
         {
@@ -151,60 +151,20 @@ namespace RG_PSI_PZ2
 
         private void DrawMapToCanvas()
         {
-            var painter = new CanvasPainter(_canvas, onLineClick: FindAndHighlightConnectedNodes);
+            var painter = new CanvasPainter(_canvas, onLineClick: HighlightLineEntities);
             painter.PaintToCanvas(_map);
         }
 
-        private void FindAndHighlightConnectedNodes(GridPoint lineFrom, GridPoint lineTo)
+        private void HighlightLineEntities(List<LineEntity> entities)
         {
-            var fromCell = _map.Get(lineFrom.Row, lineFrom.Column);
-            var toCell = _map.Get(lineTo.Row, lineTo.Column);
-
-            var cellsToHighlight = new List<GridMapCell>();
-
-            if (IsPowerEntity(fromCell) && IsPowerEntity(toCell))
+            var ids = new List<long>();
+            foreach (var entity in entities)
             {
-                cellsToHighlight.Add(fromCell);
-                cellsToHighlight.Add(toCell);
-                HighlightCells(cellsToHighlight);
-                return;
+                ids.Add(entity.FirstEnd);
+                ids.Add(entity.SecondEnd);
             }
-
-            var q = new Queue<GridMapCell>();
-            GridMapCell start = !IsPowerEntity(fromCell) ? fromCell : toCell;
-            q.Enqueue(start);
-
-            bool[,] visited = new bool[_map.NumRows, _map.NumCols];
-
-            while (q.Count > 0)
-            {
-                var cell = q.Dequeue();
-
-                if (cell == null)
-                {
-                    continue;
-                }
-
-                if (IsPowerEntity(cell))
-                {
-                    cellsToHighlight.Add(cell);
-                    continue;
-                }
-
-                foreach (var point in cell.ConnectedTo)
-                {
-                    if (visited[point.Row, point.Column])
-                    {
-                        continue;
-                    }
-
-                    var neighborCell = _map.Get(point.Row, point.Column);
-                    q.Enqueue(neighborCell);
-                    visited[neighborCell.Row, neighborCell.Column] = true;
-                }
-            }
-
-            HighlightCells(cellsToHighlight);
+            var cells = ids.Distinct().Select(id => _map.GetById(id)).Where(cell => cell != null).ToList();
+            HighlightCells(cells);
         }
 
         private static readonly List<GridMapCell> prevHighlighted = new List<GridMapCell>();

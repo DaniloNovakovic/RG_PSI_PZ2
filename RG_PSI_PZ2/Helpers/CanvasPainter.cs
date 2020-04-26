@@ -23,9 +23,9 @@ namespace RG_PSI_PZ2.Helpers
         public Brush LineCrossFill { get; set; } = Brushes.DarkGray;
 
         private readonly Canvas _canvas;
-        private readonly Action<GridPoint, GridPoint> _onLineClick;
+        private readonly Action<List<LineEntity>> _onLineClick;
 
-        public CanvasPainter(Canvas canvas, int elementWidth = 2, Action<GridPoint, GridPoint> onLineClick = null)
+        public CanvasPainter(Canvas canvas, int elementWidth = 2, Action<List<LineEntity>> onLineClick = null)
         {
             ElementWidth = elementWidth;
             _canvas = canvas;
@@ -40,7 +40,7 @@ namespace RG_PSI_PZ2.Helpers
             DrawGridLines();
 
             var nodes = new List<FrameworkElement>();
-            var lines = new List<Line>();
+            var lineParts = new List<LinePart>();
 
             map.ForEach(cell =>
             {
@@ -65,27 +65,43 @@ namespace RG_PSI_PZ2.Helpers
 
                 nodes.Add(el);
 
-                cell.Lines.ForEach(line => lines.AddRange(CreateLines(line)));
+                cell.Lines.ForEach(line => lineParts.AddRange(CreateLineParts(line)));
             });
 
-            var filteredLines = RemoveDuplicates(lines);
+            var filteredLines = RemoveDuplicates(lineParts);
             filteredLines.ForEach(line => _canvas.Children.Add(line));
             nodes.ForEach(node => _canvas.Children.Add(node));
         }
 
-        private List<Line> RemoveDuplicates(List<Line> lines)
+        private List<Line> RemoveDuplicates(List<LinePart> parts)
         {
             var comparer = new LineEqualityComparer();
-            return lines.Distinct(comparer).ToList();
+            var lineEntitiesByLine = new Dictionary<Line, List<LineEntity>>(comparer);
+            foreach (var part in parts)
+            {
+                if (!lineEntitiesByLine.TryGetValue(part.UIElement, out var entities))
+                {
+                    entities = new List<LineEntity>();
+                    lineEntitiesByLine.Add(part.UIElement, entities);
+                }
+
+                entities.Add(part.Entity);
+            }
+
+            foreach (var pair in lineEntitiesByLine)
+            {
+                AttachHandlersToLine(line: pair.Key, entities: pair.Value);
+            }
+            return lineEntitiesByLine.Keys.ToList();
         }
 
-        private List<Line> CreateLines(LineEntity line)
+        private List<LinePart> CreateLineParts(LineEntity entity)
         {
-            var lines = new List<Line>();
-            for (int i = 0; i < line.Vertices.Count - 1; ++i)
+            var lineParts = new List<LinePart>();
+            for (int i = 0; i < entity.Vertices.Count - 1; ++i)
             {
-                var first = line.Vertices[i];
-                var second = line.Vertices[i + 1];
+                var first = entity.Vertices[i];
+                var second = entity.Vertices[i + 1];
 
                 var uiLine = new Line
                 {
@@ -95,17 +111,16 @@ namespace RG_PSI_PZ2.Helpers
                     Y2 = MapRowToCanvasTop(second.Row),
                     Stroke = LineEntityStroke,
                     StrokeThickness = LineEntityStrokeThickness,
-                    ToolTip = line
+                    ToolTip = entity
                 };
-                AttachHandlersToLine(first, second, uiLine);
-                lines.Add(uiLine);
+                lineParts.Add(new LinePart { Entity = entity, UIElement = uiLine });
             }
-            return lines;
+            return lineParts;
         }
 
-        private void AttachHandlersToLine(GridPoint first, GridPoint second, Line line)
+        private void AttachHandlersToLine(Line line, List<LineEntity> entities)
         {
-            line.MouseRightButtonUp += (s, e) => _onLineClick?.Invoke(first, second);
+            line.MouseRightButtonUp += (s, e) => _onLineClick?.Invoke(entities);
         }
 
         private void DrawGridLines()

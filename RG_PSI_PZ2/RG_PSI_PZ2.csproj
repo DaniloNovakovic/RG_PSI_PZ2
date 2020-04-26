@@ -71,6 +71,7 @@
     <Compile Include="Helpers\GridMapCell.cs" />
     <Compile Include="Helpers\ILineClickBehavior.cs" />
     <Compile Include="Helpers\LineEqualityComparer.cs" />
+    <Compile Include="Helpers\LinePart.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
