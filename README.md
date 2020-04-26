@@ -38,7 +38,12 @@ Follow these steps to get your development environment set up:
 
 User can zoom-in and out of grid with Scale widget, and moved around with horizontal and vertical scroll barrs.
 
+![app-demo](./doc/app_demo.PNG)
+
 User can also `Left click` on ellipse to zoom the screen towards it, as well as `Right click` on part of line to highlight nodes that share that part of line.
+
+![marked_example_1](./doc/oznacena_dva_a.PNG)
+![marked_example_2](./doc/oznacena_dva_b.PNG)
 
 ---
 
