@@ -54,7 +54,7 @@ namespace RG_PSI_PZ2
                 var start = _map.GetById(line.FirstEnd);
                 var end = _map.GetById(line.SecondEnd);
 
-                if (start == null || end == null)
+                if (start == null || end == null || AreConnected(start, end))
                 {
                     continue;
                 }
@@ -70,6 +70,18 @@ namespace RG_PSI_PZ2
                 start.Lines.Add(line);
                 _map.Connect(line.Vertices);
             }
+        }
+
+        private bool AreConnected(GridMapCell leftCell, GridMapCell rightCell)
+        {
+            return leftCell.Lines.Any(line => DoesConnect(line, leftCell, rightCell))
+                || rightCell.Lines.Any(line => DoesConnect(line, leftCell, rightCell));
+        }
+
+        private bool DoesConnect(LineEntity line, GridMapCell leftCell, GridMapCell rightCell)
+        {
+            return (line.FirstEnd == leftCell.Id || line.FirstEnd == rightCell.Id)
+                && (line.SecondEnd == leftCell.Id || line.SecondEnd == rightCell.Id);
         }
 
         private bool IsNotNull(int rr, int cc)
